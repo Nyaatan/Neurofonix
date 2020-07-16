@@ -2053,6 +2053,9 @@ class MusicBot(discord.Client):
                 self.str.get('cmd-remove-noperms', "You do not have the valid permissions to remove that entry from the queue, make sure you're the one who queued it or have instant skip permissions"), expire_in=20
             )
 
+    async def _skip_check(self, player, channel, author, message, permissions, voice_channel, param=''):
+        pass
+
     async def cmd_skip(self, player, channel, author, message, permissions, voice_channel, param=''):
         """
         Usage:
@@ -2061,7 +2064,7 @@ class MusicBot(discord.Client):
         Skips the current song when enough votes are cast.
         Owners and those with the instaskip permission can add 'force' or 'f' after the command to force skip.
         """
-
+        await self._skip_check(player, channel, author, message, permissions, voice_channel, param='')
         if player.is_stopped:
             raise exceptions.CommandError(self.str.get('cmd-skip-none', "Can't skip! The player is not playing!"), expire_in=20)
 

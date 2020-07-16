@@ -1,19 +1,13 @@
-import os
-import sys
-
-import pickle
-import threading
-from random import randint
-from time import sleep
-
 import asyncio
-
-import discord
-from pyprind import ProgBar
 import json
+import pickle
+import sys
+from random import randint
+
+from pyprind import ProgBar
+
 # from . import markov
 from musicbot import bot
-from discord.ext import commands
 
 _kg_music_id = 693769797963350047
 
@@ -45,7 +39,7 @@ class MusicBot(bot.MusicBot):
 
     last_20 = []
 
-    async def _cmd_autoplay(self):
+    async def _autoplay_play(self):
         queue = self.model.get_next()
         iter = 0
         while queue in self.last_20:
@@ -58,8 +52,16 @@ class MusicBot(bot.MusicBot):
             self.last_20.pop(0)
         print(queue.replace('-play', '').replace('-search', ''))
         play_task = asyncio.create_task(self.cmd_play(self.tempmessage, self.tempplayer, self.tempchannel,
-                                                      self.tempauthor, self.temppermissions, self.templeftover_args, queue))
+                                                      self.tempauthor, self.temppermissions, self.templeftover_args,
+                                                      queue))
         await play_task
+
+    async def _skip_check(self, player, channel, author, message, permissions, voice_channel, param=''):
+        if self._autoplay:
+            await self._autoplay_play()
+
+    async def _cmd_autoplay(self):
+        await self._autoplay_play()
         if self._autoplay:
             await asyncio.sleep(120)
             autoplay_task = asyncio.create_task(self._cmd_autoplay())
@@ -81,6 +83,9 @@ class MusicBot(bot.MusicBot):
     async def cmd_autostop(self):
         self._autoplay = False
         self.last_20 = []
+
+    async def cmd_aprestart(self, message, player, channel, author, permissions, leftover_args):
+        await self.cmd_autoplay(message, player, channel, author, permissions, leftover_args)
 
     async def cmd_update(self, message):
         channel = message.channel
