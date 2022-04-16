@@ -1,5 +1,5 @@
 # This is expanded version of Just-Some-Bots' MusicBot.
-## This music bot is able to learn users' music patterns basing on Markov's chains and (in future) neural network.
+## This music bot is able to learn users' music patterns basing on Markov's chains.
 ### Commands introduced in Neurofonix:
   - !update - updates learned model based on previous messages sent to the channel
   - !autoplay - periodically adds new song to queue based on the outcome of model
